@@ -730,6 +730,7 @@ FastRandomContext::FastRandomContext(bool fDeterministic) noexcept : requires_se
     if (!GetDetSeed().empty()) {
         std::string t = GetDetSeed();
         std::copy( t.begin(), t.end(), seed.begin());
+        requires_seed = false;
     } 
     rng.SetKey(seed.begin(), 32);
 }
