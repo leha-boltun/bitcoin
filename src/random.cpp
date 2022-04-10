@@ -723,7 +723,7 @@ bool Random_SanityCheck()
 
 FastRandomContext::FastRandomContext(bool fDeterministic) noexcept : requires_seed(!fDeterministic), bytebuf_size(0), bitbuf_size(0)
 {
-    if (!fDeterministic) {
+    if (!fDeterministic && GetDetSeed().empty()) {
         return;
     }
     uint256 seed;
