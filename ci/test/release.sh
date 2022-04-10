@@ -10,7 +10,7 @@ if [[ "$GITHUB_TOKEN" == "" ]]; then
   exit 1
 fi
 
-XZ_OPT=-9 tar -Jcvf "$BASE_OUTDIR/../bitcoin.tar.gz" "$BASE_OUTDIR"
+XZ_OPT=-9 tar -Jcvf "$BASE_OUTDIR/../bitcoin.tar.xz" "$BASE_OUTDIR"
 
 file_content_type="application/octet-stream"
 files_to_upload=(
