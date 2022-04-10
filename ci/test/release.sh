@@ -14,7 +14,7 @@ tar czf "$BASE_OUTDIR/../bitcoin.tar.gz" "$BASE_OUTDIR" -I "gzip --best"
 
 file_content_type="application/octet-stream"
 files_to_upload=(
-    "$DEPENDS_DIR/../bitcoin.tar.gz"
+    "$BASE_OUTDIR/../bitcoin.tar.gz"
 )
 
 for fpath in $files_to_upload
