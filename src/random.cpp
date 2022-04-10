@@ -221,6 +221,16 @@ static void SeedHardwareSlow(CSHA512& hasher) noexcept {
 #endif
 }
 
+std::string GetDetSeed() {
+     static const char * val = std::getenv("DET_SEED");
+     if ( val == nullptr ) { // invalid to assign nullptr to std::string
+         return "";
+     }
+     else {
+         return val;
+     }
+}
+
 /** Use repeated SHA512 to strengthen the randomness in seed32, and feed into hasher. */
 static void Strengthen(const unsigned char (&seed)[32], int microseconds, CSHA512& hasher) noexcept
 {
@@ -552,8 +562,28 @@ enum class RNGLevel {
     PERIODIC, //!< Called by RandAddPeriodic()
 };
 
+class SpinLock {
+    std::atomic_flag locked = ATOMIC_FLAG_INIT ;
+public:
+    void lock() {
+        while (locked.test_and_set(std::memory_order_acquire)) { ; }
+    }
+    void unlock() {
+        locked.clear(std::memory_order_release);
+    }
+};
+
 static void ProcRand(unsigned char* out, int num, RNGLevel level) noexcept
-{
+{    
+    static FastRandomContext ctx;
+    static SpinLock lock;
+    if (!GetDetSeed().empty()) {
+        lock.lock();
+        std::vector<unsigned char> vect = ctx.randbytes(num);
+        std::copy(vect.begin(), vect.end(), out);
+        lock.unlock();
+        return;
+    }
     // Make sure the RNG is initialized first (as all Seed* function possibly need hwrand to be available).
     RNGState& rng = GetRNGState();
 
@@ -635,7 +665,9 @@ std::vector<unsigned char> FastRandomContext::randbytes(size_t len)
 
 FastRandomContext::FastRandomContext(const uint256& seed) noexcept : requires_seed(false), bytebuf_size(0), bitbuf_size(0)
 {
-    rng.SetKey(seed.begin(), 32);
+    uint256 localSeed = seed;
+    if (!GetDetSeed().empty()) { localSeed = uint256::uint256S(GetDetSeed()); } 
+    rng.SetKey(localSeed.begin(), 32);
 }
 
 bool Random_SanityCheck()
@@ -690,6 +722,7 @@ FastRandomContext::FastRandomContext(bool fDeterministic) noexcept : requires_se
         return;
     }
     uint256 seed;
+    if (!GetDetSeed().empty()) { seed = uint256::uint256S(GetDetSeed()); } 
     rng.SetKey(seed.begin(), 32);
 }
 
