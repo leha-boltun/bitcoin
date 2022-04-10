@@ -2,6 +2,7 @@
 
 
 env:
+  GITHUB_TOKEN: ENCRYPTED[913d0cec4c351c85c00e242548c6b0e32b465ead091084d4ab93bfec39cf1c54541f89ecc792525ae5d26c215bf97ac6]
   PACKAGE_MANAGER_INSTALL: "apt-get update && apt-get install -y"
   MAKEJOBS: "-j4"
   CIRRUS_CLONE_DEPTH: 1
