@@ -668,7 +668,7 @@ FastRandomContext::FastRandomContext(const uint256& seed) noexcept : requires_se
     uint256 localSeed;
     if (!GetDetSeed().empty()) {
         std::string t = GetDetSeed();
-        std::copy( t.begin(), t.end(), std::back_inserter(localSeed));
+        std::copy( t.begin(), t.end(), localSeed.begin());
     } else {
         localSeed = seed;
     }
