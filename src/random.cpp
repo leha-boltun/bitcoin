@@ -665,8 +665,13 @@ std::vector<unsigned char> FastRandomContext::randbytes(size_t len)
 
 FastRandomContext::FastRandomContext(const uint256& seed) noexcept : requires_seed(false), bytebuf_size(0), bitbuf_size(0)
 {
-    uint256 localSeed = seed;
-    if (!GetDetSeed().empty()) { localSeed = uint256S(GetDetSeed()); } 
+    uint256 localSeed;
+    if (!GetDetSeed().empty()) {
+        std::string t = GetDetSeed();
+        std::copy( t.begin(), t.end(), std::back_inserter(localSeed));
+    } else {
+        localSeed = seed;
+    }
     rng.SetKey(localSeed.begin(), 32);
 }
 
