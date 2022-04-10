@@ -10,11 +10,11 @@ if [[ "$GITHUB_TOKEN" == "" ]]; then
   exit 1
 fi
 
-tar czf "$DEPENDS_DIR/bitcoin.tar.gz" "$DEPENDS_DIR/$HOST"
+tar czf "$BASE_OUTDIR/../bitcoin.tar.gz" "$BASE_OUTDIR" -I "gzip --best"
 
 file_content_type="application/octet-stream"
 files_to_upload=(
-    "$DEPENDS_DIR/bitcoin.tar.gz"
+    "$DEPENDS_DIR/../bitcoin.tar.gz"
 )
 
 for fpath in $files_to_upload
